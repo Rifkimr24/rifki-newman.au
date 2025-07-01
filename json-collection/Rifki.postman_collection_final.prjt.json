@@ -1,0 +1,518 @@
+{
+	"info": {
+		"_postman_id": "23da13c6-cc10-4891-9d94-66a2b3230f05",
+		"name": "API Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45292509",
+		"_collection_link": "https://maulanarifki.postman.co/workspace/Maulana-Rifki's-Workspace~0f366e99-2ce5-4e2a-864d-7fc3a98882a2/collection/45292509-23da13c6-cc10-4891-9d94-66a2b3230f05?action=share&source=collection_link&creator=45292509"
+	},
+	"item": [
+		{
+			"name": "API Authentication",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"function generateRandomAlphabet(length) {\r",
+							"    const alphabet = 'abcdefghijklmnopqrstuvwxyz';\r",
+							"    let result = '';\r",
+							"    for (let i = 0; i < length; i++) {\r",
+							"        result += alphabet.charAt(Math.floor(Math.random() * alphabet.length));\r",
+							"    }\r",
+							"    return result;\r",
+							"}\r",
+							"\r",
+							"// Function untuk generate random numbers\r",
+							"function generateRandomNumbers(length) {\r",
+							"    let result = '';\r",
+							"    for (let i = 0; i < length; i++) {\r",
+							"        result += Math.floor(Math.random() * 10).toString();\r",
+							"    }\r",
+							"    return result;\r",
+							"}\r",
+							"\r",
+							"// Get original values from environment variables\r",
+							"const originalName = pm.environment.get(\"name\") || \"Rifki\";\r",
+							"const originalEmail = pm.environment.get(\"email\") || \"Rifki@gmail.com\";\r",
+							"\r",
+							"// Generate random additions\r",
+							"const randomAlphabet = generateRandomAlphabet(2); // 2 random alphabet chars\r",
+							"const randomNumbers = generateRandomNumbers(3);   // 3 random digit numbers\r",
+							"\r",
+							"// Modify name: add 2 random alphabet characters after original name\r",
+							"const modifiedName = originalName + randomAlphabet;\r",
+							"\r",
+							"// Modify email: add 3 random numbers before '@'\r",
+							"const emailParts = originalEmail.split('@');\r",
+							"const modifiedEmail = emailParts[0] + randomNumbers + '@' + emailParts[1];\r",
+							"\r",
+							"// Set modified values to environment variables\r",
+							"pm.environment.set(\"name\", modifiedName);\r",
+							"pm.environment.set(\"email\", modifiedEmail);\r",
+							"\r",
+							"// Log the changes for debugging\r",
+							"console.log(\"=== PRE-REQUEST SCRIPT EXECUTION ===\");\r",
+							"console.log(\"Original Name: \" + originalName);\r",
+							"console.log(\"Modified Name: \" + modifiedName);\r",
+							"console.log(\"Random Alphabet Added: \" + randomAlphabet);\r",
+							"console.log(\"\");\r",
+							"console.log(\"Original Email: \" + originalEmail);\r",
+							"console.log(\"Modified Email: \" + modifiedEmail);\r",
+							"console.log(\"Random Numbers Added: \" + randomNumbers);\r",
+							"console.log(\"=====================================\");\r",
+							"\r",
+							"// Optional: Store original values for potential restoration later\r",
+							"pm.environment.set(\"original_name\", originalName);\r",
+							"pm.environment.set(\"original_email\", originalEmail);\r",
+							"pm.environment.set(\"random_suffix\", randomAlphabet);\r",
+							"pm.environment.set(\"random_numbers\", randomNumbers);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify access token is not null\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.accessToken).to.not.be.null;\r",
+							"    pm.expect(jsonData.accessToken).to.not.be.undefined;\r",
+							"    \r",
+							"    // Set token as environment variable for other requests\r",
+							"    pm.environment.set(\"token\", jsonData.accessToken);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"clientName\": \"{{name}}\",\n   \"clientEmail\": \"{{email}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/api-clients/",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"api-clients",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response message status = OK\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql(\"OK\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/status",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Single Book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify all values in the response message are correct\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    \r",
+							"    pm.test(\"Id = 1\", function () {\r",
+							"        pm.expect(jsonData.id).to.eql(1);\r",
+							"    });\r",
+							"    \r",
+							"    pm.test(\"Name = The Russian\", function () {\r",
+							"        pm.expect(jsonData.name).to.eql(\"The Russian\");\r",
+							"    });\r",
+							"    \r",
+							"    pm.test(\"Author = James Patterson and James 0. Born\", function () {\r",
+							"        pm.expect(jsonData.author).to.eql(\"James Patterson and James O. Born\");\r",
+							"    });\r",
+							"    \r",
+							"    pm.test(\"ISBN = 1780899475\", function () {\r",
+							"        pm.expect(jsonData.isbn).to.eql(\"1780899475\");\r",
+							"    });\r",
+							"    \r",
+							"    pm.test(\"Type = Fiction\", function () {\r",
+							"        pm.expect(jsonData.type).to.eql(\"fiction\");\r",
+							"    });\r",
+							"    \r",
+							"    pm.test(\"Price = 12.98\", function () {\r",
+							"        pm.expect(jsonData.price).to.eql(12.98);\r",
+							"    });\r",
+							"    \r",
+							"    pm.test(\"Current Stock = 12\", function () {\r",
+							"        pm.expect(jsonData['current-stock']).to.eql(12);\r",
+							"    });\r",
+							"    \r",
+							"    pm.test(\"Available = true\", function () {\r",
+							"        pm.expect(jsonData.available).to.eql(true);\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/books/1",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"books",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submit Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code !== 201) {\r",
+							"    console.error(\"❌ FAILED - Status:\", pm.response.code);\r",
+							"    try {\r",
+							"        var error = pm.response.json();\r",
+							"        console.error(\"Error:\", error.error || \"Unknown error\");\r",
+							"    } catch (e) {\r",
+							"        console.error(\"Response:\", pm.response.text());\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify the 'created' value in the response message = true\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.created).to.eql(true);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify the 'orderId' value in the response message is not null\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.orderId).to.not.be.null;\r",
+							"    pm.expect(jsonData.orderId).to.not.be.undefined;\r",
+							"    \r",
+							"    // Set orderId as environment variable for other requests\r",
+							"    pm.environment.set(\"orderID\", jsonData.orderId);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"bookId\": 1,\n  \"customerName\": \"Nini\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/orders",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Single Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code !== 201) {\r",
+							"    console.error(\"❌ FAILED - Status:\", pm.response.code);\r",
+							"    try {\r",
+							"        var error = pm.response.json();\r",
+							"        console.error(\"Error:\", error.error || \"Unknown error\");\r",
+							"    } catch (e) {\r",
+							"        console.error(\"Response:\", pm.response.text());\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 10000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(10000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify all values in the response message are correct\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    \r",
+							"    pm.test(\"Id matches value from submit order response\", function () {\r",
+							"        var expectedOrderId = pm.environment.get(\"orderID\");\r",
+							"        pm.expect(jsonData.id).to.eql(expectedOrderId);\r",
+							"    });\r",
+							"    \r",
+							"    pm.test(\"Book Id matches value from submit order request\", function () {\r",
+							"        // Assuming bookId = 1 from the submit order request body\r",
+							"        pm.expect(jsonData.bookId).to.eql(1);\r",
+							"    });\r",
+							"    \r",
+							"    pm.test(\"Customer name matches value from submit order request\", function () {\r",
+							"        // Assuming customerName = \"Nini\" from the submit order request body\r",
+							"        pm.expect(jsonData.customerName).to.eql(\"Nini\");\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(\"🔍 Single Order Request Validation...\");\r",
+							"\r",
+							"// Check authorization token\r",
+							"const token = pm.environment.get(\"token\");\r",
+							"if (!token || token.trim() === \"\") {\r",
+							"    console.error(\"❌ Missing Authorization Token\");\r",
+							"    console.log(\"💡 Run 'API Authentication' request first\");\r",
+							"    throw new Error(\"Authorization token required for Single Order request\");\r",
+							"}\r",
+							"\r",
+							"// Check order ID from environment or URL\r",
+							"let orderID = pm.environment.get(\"orderID\");\r",
+							"const url = pm.request.url.toString();\r",
+							"\r",
+							"// Extract orderID from URL if not in environment\r",
+							"if (!orderID) {\r",
+							"    const match = url.match(/\\/orders\\/([^/?]+)/);\r",
+							"    if (match && match[1] && match[1] !== \"{{orderID}}\") {\r",
+							"        orderID = match[1];\r",
+							"        console.log(\"🆔 Order ID extracted from URL:\", orderID);\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"if (!orderID || orderID.trim() === \"\" || orderID === \"{{orderID}}\") {\r",
+							"    console.error(\"❌ Missing Order ID\");\r",
+							"    console.log(\"🔗 Current URL:\", url);\r",
+							"    console.log(\"🔑 Environment orderID:\", pm.environment.get(\"orderID\") || \"NOT SET\");\r",
+							"    console.log(\"💡 Run 'Submit Order' request first to get orderID\");\r",
+							"    throw new Error(\"Order ID required for Single Order request\");\r",
+							"}\r",
+							"\r",
+							"// Update URL if using placeholder\r",
+							"if (url.includes(\"{{orderID}}\")) {\r",
+							"    const newUrl = url.replace(\"{{orderID}}\", orderID);\r",
+							"    pm.request.url = newUrl;\r",
+							"    console.log(\"🔧 URL updated with orderID\");\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/orders/{{orderID}}",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"orders",
+						"{{orderID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code !== 201) {\r",
+							"    console.error(\"❌ FAILED - Status:\", pm.response.code);\r",
+							"    try {\r",
+							"        var error = pm.response.json();\r",
+							"        console.error(\"Error:\", error.error || \"Unknown error\");\r",
+							"    } catch (e) {\r",
+							"        console.error(\"Response:\", pm.response.text());\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"packages": {},
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/orders/{{orderID}}",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"orders",
+						"{{orderID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
